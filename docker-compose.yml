@@ -1,0 +1,23 @@
+services:
+  hindsight:
+    image: ghcr.io/vectorize-io/hindsight:latest
+    container_name: hindsight
+    restart: unless-stopped
+    shm_size: 1g
+    ports:
+      - "${HINDSIGHT_API_PORT:-8888}:8888"
+      - "${HINDSIGHT_UI_PORT:-9999}:9999"
+    environment:
+      - HINDSIGHT_API_LLM_PROVIDER=${HINDSIGHT_API_LLM_PROVIDER:-openai}
+      - HINDSIGHT_API_LLM_API_KEY=${HINDSIGHT_API_LLM_API_KEY}
+      - HINDSIGHT_API_LLM_MODEL=${HINDSIGHT_API_LLM_MODEL:-gpt-4o-mini}
+      - HINDSIGHT_API_WORKER_ID=${HINDSIGHT_API_WORKER_ID:-incident-response-worker-1}
+    env_file:
+      - path: .env
+        required: false
+    volumes:
+      - hindsight_data:/home/hindsight/.pg0
+
+volumes:
+  hindsight_data:
+    driver: local
